@@ -1,0 +1,338 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-parent</artifactId>
+		<version>2.4.3</version>
+		<relativePath /> <!-- lookup parent from repository -->
+	</parent>
+	<groupId>com.melg</groupId>
+	<artifactId>schoolapp</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+	<name>schoolapp</name>
+	<description>Demo project for Spring Boot</description>
+
+	<!-- ********************************************** -->
+	<!-- **************** PROPERTIES ****************** -->
+	<!-- ********************************************** -->
+
+	<properties>
+		<java.version>11</java.version>
+		<clover-maven-plugin.version>4.4.1</clover-maven-plugin.version>
+	</properties>
+	<dependencies>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-r2dbc</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-rest</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-webflux</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-devtools</artifactId>
+			<scope>runtime</scope>
+			<optional>true</optional>
+		</dependency>
+		<dependency>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
+			<optional>true</optional>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.restdocs</groupId>
+			<artifactId>spring-restdocs-mockmvc</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>io.projectreactor</groupId>
+			<artifactId>reactor-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.h2database</groupId>
+			<artifactId>h2</artifactId>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<groupId>io.r2dbc</groupId>
+			<artifactId>r2dbc-h2</artifactId>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-lang3</artifactId>
+			<version>3.12.0</version>
+		</dependency>
+		<dependency>
+			<groupId>io.vavr</groupId>
+			<artifactId>vavr</artifactId>
+			<version>0.10.3</version>
+		</dependency>
+	</dependencies>
+
+	<build>
+		<finalName>${project.artifactId}</finalName>
+		<defaultGoal>clean install</defaultGoal>
+
+		<plugins>
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+				<configuration>
+					<!-- https://github.com/paketo-buildpacks/bellsoft-liberica/issues/3#issuecomment-640063250 -->
+					<image>
+						<name>melg.io/${project.artifactId}:${project.version}</name>
+					</image>
+					<excludes>
+						<exclude>
+							<groupId>org.projectlombok</groupId>
+							<artifactId>lombok</artifactId>
+						</exclude>
+					</excludes>
+					<jvmArguments>
+						${spring.boot.debug}
+					</jvmArguments>
+					<additionalProperties>
+						<spring-boot-version>${spring.boot.maven.plugin.version}</spring-boot-version>
+					</additionalProperties>
+				</configuration>
+			</plugin>
+
+			<plugin>
+				<groupId>org.openclover</groupId>
+				<artifactId>clover-maven-plugin</artifactId>
+				<version>${clover-maven-plugin.version}</version>
+				<configuration>
+					<targetPercentage>30%</targetPercentage>
+					<debug>true</debug>
+					<snapshot>${user.home}/.clover/${project.groupId}-${project.artifactId}/clover.snapshot</snapshot>
+					<excludes>
+						<exclude>**/com/melg/schoolapp/model/**</exclude>
+						<exclude>**/com/melg/schoolapp/config/**</exclude>
+					</excludes>
+					<!-- mvn clean clover:setup test clover:aggregate clover:clover -->
+				</configuration>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-site-plugin</artifactId>
+				<version>3.9.0</version>
+				<configuration>
+					<skip>${maven-site-plugin.skip}</skip>
+				</configuration>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-project-info-reports-plugin</artifactId>
+				<version>3.0.0</version>
+				<configuration>
+					<customBundle>${project.basedir}/src/site/custom/project-info-report.properties</customBundle>
+				</configuration>
+			</plugin>
+
+			<!-- tag::asciidoc[] -->
+			<plugin>
+				<groupId>org.asciidoctor</groupId>
+				<artifactId>asciidoctor-maven-plugin</artifactId>
+				<version>2.1.0</version>
+				<executions>
+					<execution>
+						<id>generate-docs</id>
+						<phase>prepare-package</phase>
+						<goals>
+							<goal>process-asciidoc</goal>
+						</goals>
+						<configuration>
+							<sourceDocumentName>index.adoc</sourceDocumentName>
+							<backend>html</backend>
+							<attributes>
+								<snippets>${project.build.directory}/snippets</snippets>
+							</attributes>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<!-- end::asciidoc[] -->
+
+<!-- 			<plugin> -->
+<!-- 				<groupId>com.spotify</groupId> -->
+<!-- 				<artifactId>dockerfile-maven-plugin</artifactId> -->
+<!-- 				<version>1.4.13</version> -->
+<!-- 				<executions> -->
+<!-- 					<execution> -->
+<!-- 						<id>default</id> -->
+<!-- 						<goals> -->
+<!-- 							<goal>build</goal> -->
+<!-- 						</goals> -->
+<!-- 					</execution> -->
+<!-- 				</executions> -->
+<!-- 				<configuration> -->
+<!-- 					<repository>melg.io/schoolapp</repository> -->
+<!-- 					<tag>${project.version}</tag> -->
+<!-- 					<buildArgs> -->
+<!-- 						<JAR_FILE>schoolapp.jar</JAR_FILE> -->
+<!-- 					</buildArgs> -->
+<!-- 				</configuration> -->
+<!-- 			</plugin> -->
+
+		</plugins>
+	</build>
+
+	<!-- ********************************************** -->
+	<!-- ****************** PROFILES ****************** -->
+	<!-- ********************************************** -->
+
+	<profiles>
+
+		<profile>
+			<id>nt</id>
+			<activation>
+				<property>
+					<name>debug</name>
+				</property>
+			</activation>
+			<properties>
+				<maven.test.skip>true</maven.test.skip>
+			</properties>
+		</profile>
+
+		<profile>
+			<id>debug</id>
+			<activation>
+				<property>
+					<name>debug</name>
+				</property>
+			</activation>
+			<properties>
+				<spring.boot.debug>
+					-Xdebug
+					-Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=7008</spring.boot.debug>
+			</properties>
+		</profile>
+
+		<profile>
+			<id>clover</id>
+			<!-- <activation> <activeByDefault>true</activeByDefault> </activation> -->
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.openclover</groupId>
+						<artifactId>clover-maven-plugin</artifactId>
+						<configuration>
+							<targetPercentage>30%</targetPercentage>
+							<debug>true</debug>
+							<snapshot>${user.home}/.clover/${project.groupId}-${project.artifactId}/clover.snapshot</snapshot>
+							<excludes>
+								<exclude>**/com/melg/schoolapp/model/**</exclude>
+								<exclude>**/com/melg/schoolapp/config/**</exclude>
+							</excludes>
+						</configuration>
+						<executions>
+							<execution>
+								<id>clover.inst</id>
+								<phase>validate</phase>
+								<goals>
+									<!-- Instrumentation changes source code, we need to use instrument-test
+										because it forks a custom build lifecycle, runs only to the test phase If
+										we use a goal that does not fork, it will affect other plugins like PMD and
+										findbugs see: http://openclover.org/doc/maven/4.2.0/plugin-info.html -->
+									<goal>instrument-test</goal>
+								</goals>
+							</execution>
+							<execution>
+								<!-- In the verify phase, we can generate the report, log results
+									and check coverage against configured targetPercentage. see: http://openclover.org/doc/maven/4.2.0/plugin-info.html -->
+								<id>clover</id>
+								<phase>verify</phase>
+								<goals>
+									<goal>clover</goal>
+									<goal>log</goal>
+									<goal>check</goal>
+								</goals>
+							</execution>
+							<execution>
+								<id>pre-site</id>
+								<phase>pre-site</phase>
+								<goals>
+									<goal>instrument</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+
+			<reporting>
+				<plugins>
+					<plugin>
+						<groupId>org.openclover</groupId>
+						<artifactId>clover-maven-plugin</artifactId>
+						<configuration>
+							<generatePdf>false</generatePdf>
+							<generateXml>false</generateXml>
+							<generateHtml>true</generateHtml>
+							<generateJson>true</generateJson>
+						</configuration>
+						<reportSets>
+							<reportSet>
+								<reports>
+									<!-- select non-aggregate reports -->
+									<report>clover</report>
+								</reports>
+							</reportSet>
+						</reportSets>
+					</plugin>
+				</plugins>
+			</reporting>
+		</profile>
+	</profiles>
+
+	<!-- ********************************************** -->
+	<!-- ***************** REPORTING ****************** -->
+	<!-- ********************************************** -->
+	<reporting>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jxr-plugin</artifactId>
+				<version>3.0.0</version>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-project-info-reports-plugin</artifactId>
+				<version>3.0.0</version>
+				<reportSets>
+					<reportSet>
+						<reports>
+							<report>index</report>
+							<report>team</report>
+							<report>mailing-lists</report>
+							<report>ci-management</report>
+							<report>issue-management</report>
+							<report>licenses</report>
+							<report>scm</report>
+						</reports>
+					</reportSet>
+				</reportSets>
+			</plugin>
+		</plugins>
+	</reporting>
+
+</project>
