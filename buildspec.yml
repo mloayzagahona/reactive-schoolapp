@@ -1,0 +1,25 @@
+version: 0.2
+
+phases:
+  install:
+    runtime-versions:
+      java: corretto11
+      docker: 18
+  pre_build:
+    commands:
+      - docker login -u $dh_user -p $dh_pass
+  build:
+    commands:
+      - echo Build started on `date`
+      - mvn test 
+  post_build:
+    commands:
+      - echo Build completed on `date`
+      - mvn package spring-boot:build-image
+      - docker tag melg.io/schoolapp:0.0.1 mloayzagahona/reactive-schoolapp:latest
+      - docker push mloayzagahona/reactive-schoolapp:latest
+artifacts:
+  files:
+    - target/schoolapp.jar
+    - appspec.yml
+  discard-paths: yes
