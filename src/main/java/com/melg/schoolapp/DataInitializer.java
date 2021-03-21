@@ -27,6 +27,7 @@ class DataInitializer implements ApplicationRunner {
     this.students
         .saveAll(
             List.of(new Student("Manuel", "Loayza", "Peru", 0),
+            		new Student("Bruce", "Rojas", "Peru", 0),
             		new Student("Dylan", "Loayza", "USA", 0)))
         .thenMany(this.students.findAll())
         .subscribe(
