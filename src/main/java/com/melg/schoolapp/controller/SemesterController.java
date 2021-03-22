@@ -27,18 +27,18 @@ public class SemesterController {
   public Flux<Semester> fetchAllSemesters() {
     return semesterService.fetchAllSemesters();
   }
-  
+
   @PostMapping(
       consumes = MediaType.APPLICATION_JSON_VALUE,
       produces = MediaType.APPLICATION_JSON_VALUE)
-  public Mono<Semester> saveStudent(@RequestBody Semester semester) {
+  public Mono<Semester> saveSemeter(@RequestBody Semester semester) {
     return semesterService.addSemester(semester);
   }
 
   @PutMapping(
       consumes = MediaType.APPLICATION_JSON_VALUE,
       produces = MediaType.APPLICATION_JSON_VALUE)
-  public Mono<Semester> updateStudent(@RequestBody Semester semester) {
+  public Mono<Semester> updateSemester(@RequestBody Semester semester) {
     if (semester.getSemesterId() == null) {
       return semesterService.addSemester(semester);
     }

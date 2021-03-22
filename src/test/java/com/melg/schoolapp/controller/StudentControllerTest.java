@@ -74,7 +74,7 @@ public class StudentControllerTest {
   }
 
   @Test
-  @DisplayName("Update Students")
+  @DisplayName("Update Student")
   void testUpdateStudent() {
 
     Student oldStudent =

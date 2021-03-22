@@ -47,7 +47,7 @@ public class RecordController {
     return recordService.addRecord(record).onErrorMap(ex -> new MaximumAllowedCreditsException());
   }
 
-  @PostMapping(
+  @GetMapping(
       value = "/{subjectId}/semester/{semesterId}/students",
       consumes = MediaType.APPLICATION_JSON_VALUE,
       produces = MediaType.APPLICATION_JSON_VALUE)

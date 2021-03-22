@@ -34,13 +34,13 @@ public class StudentController {
   }
 
   @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-  public Mono<String> fetchStudents(@PathVariable("id") String studentId) {
+  public Mono<String> fetchStudentById(@PathVariable("id") String studentId) {
     return Mono.just("{studentId: " + studentId + "}");
   }
 
-  @PostMapping(value = "/{studentId}/subjects/semester/{semesterId}", produces = MediaType.APPLICATION_JSON_VALUE)
+  @GetMapping(value = "/{studentId}/subjects/semester/{semesterId}", produces = MediaType.APPLICATION_JSON_VALUE)
   public Flux<RecordDTO> listSubjectsPerStudentPerSemester(
-      @PathVariable("studentId") Long studentId, 
+      @PathVariable("studentId") Long studentId,
       @PathVariable("semesterId") Long semesterId) {
     return studentService.findSubjectsPerStudentPerSemester(studentId, semesterId);
   }
