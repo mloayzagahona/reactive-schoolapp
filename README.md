@@ -116,3 +116,10 @@ The app will start in the port 8080. To port for debuging is 7008.
    http://35.192.82.242:8080
 
 
+## Things to improve
+
+- Add R2BDC Pool Connection (to improve the connection to the DB)
+- Increase  the unit coverage to 80% and stop the building when the coverage is less than 80%
+- Add Spring Security to protect the access by roles
+- Add JMeter test to perform a stress and load test.
+- Automate the deployments to Kubernetes
