@@ -8,6 +8,8 @@ import reactor.core.publisher.Mono;
 public interface IStudentService {
   Flux<Student> fetchAllStudents();
 
+  Mono<Student> fecthStudentById(Long studentId);
+
   Mono<Student> addStudent(Student student);
 
   Mono<Student> updateStudent(Student student);
@@ -15,5 +17,5 @@ public interface IStudentService {
   Mono<Void> enrollStudentToSemester(Student student);
 
   Flux<RecordDTO> findSubjectsPerStudentPerSemester(Long studentId, Long semesterId);
-  
+
 }
